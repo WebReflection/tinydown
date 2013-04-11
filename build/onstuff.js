@@ -32,9 +32,9 @@
     }
   }
   var add = window.addEventListener || window.attachEvent,
-      parse = function () {
+      parsePosts = function () {
         findPosts(window.document);
-        parse = Object;
+        parsePosts = Object;
       };
   add('DOMContentLoaded', parsePosts);
   add('onload', parsePosts);
