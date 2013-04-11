@@ -61,7 +61,7 @@ function tinydown(input) {"use strict";
       "  +" + NL, "<br/>",
       // parse ordered and unordered lists
       "^ *(\\* |\\+ |- |\\d+. )" + ANYTHING, function(m, c, s, t){
-        return "<" + (t = /^\d/.test(c) ? "ol>" : "ul>") + "<li>" + markdown(s) + "</li></" + t;
+        return "<" + (t = /^\d/.test(c) ? "ol>" : "ul>") + "<li>" + tinydown(s) + "</li></" + t;
       },
       // remove superflous parsing
       "</(ul|ol)>\\s*<\\1>", "",
@@ -75,7 +75,7 @@ function tinydown(input) {"use strict";
       LINK, '<a href="$2" title="$4">$1</a>',
       // parse blockquotes
       "^&gt; " + ANYTHING, function(m, s){
-        return "<" + BLOCKQUOTE + markdown(s)+ "</" + BLOCKQUOTE;
+        return "<" + BLOCKQUOTE + tinydown(s)+ "</" + BLOCKQUOTE;
       },
       // remove superflous parsing
       "</" + BLOCKQUOTE + "\\s*<" + BLOCKQUOTE, "",
