@@ -1,12 +1,15 @@
 {
-  "version": "0.0.0",
+  "version": "0.1.0",
   "name": "tinydown",
   "description": "",
   "homepage": "https://github.com/WebReflection/tinydown",
-  "keywords": [],
+  "keywords": [
+    "markdown",
+    "tiny"
+  ],
   "author": {
-    "name": "",
-    "web": ""
+    "name": "Andrea Giammarchi",
+    "web": "http://webreflection.blogspot.com/"
   },
   "repository": {
     "type": "git",
@@ -15,8 +18,5 @@
   "main": "./build/tinydown.node.js",
   "scripts": {
     "test": "node test/.test.js"
-  },
-  "dependencies": {
-    "wru": ">= 0.0.0"
   }
 }
