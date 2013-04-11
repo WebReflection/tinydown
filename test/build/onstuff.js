@@ -31,10 +31,13 @@
       list[i].innerHTML = tinydown(list[i].textContent || list[i].innerText);
     }
   }
-  var add = window.addEventListener || window.attachEvent,
+  var done = false,
+      add = window.addEventListener || window.attachEvent,
       parsePosts = function () {
-        findPosts(window.document);
-        parsePosts = Object;
+        if (!done) {
+          done = true;
+          findPosts(window.document);
+        }
       };
   add('DOMContentLoaded', parsePosts);
   add('onload', parsePosts);
