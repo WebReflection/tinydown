@@ -6,7 +6,7 @@
         querySelectorAll = 'querySelectorAll',
         getElementsByClassName = 'getElementsByClassName',
         getElementsByTagName = 'getElementsByTagName',
-        div, list, i, length;
+        div, list, i, length, tmp;
     if (querySelectorAll in document) {
       list = document[querySelectorAll]([tagName, className].join('.'));
     } else if (getElementsByClassName in document) {
@@ -33,7 +33,9 @@
         re.test((findHeader(list[i][parentNode]) || {}).innerHTML) &&
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
-        list[i].innerHTML = normalized(tinydown(trim.call(list[i].textContent || list[i].innerText)));
+        tmp = normalized(tinydown(trim.call(list[i].textContent || list[i].innerText)));
+        if (window.console) console.log(tmp);
+        list[i].innerHTML = tmp;
       } else {
         list[i].style.whiteSpace = 'normal';
       }
