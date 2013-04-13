@@ -3,7 +3,6 @@
     var tagName = 'div',
         className = 'post-body',
         parentNode = 'parentNode',
-        addEventListener = 'addEventListener',
         querySelectorAll = 'querySelectorAll',
         getElementsByClassName = 'getElementsByClassName',
         getElementsByTagName = 'getElementsByTagName',
@@ -34,19 +33,11 @@
         re.test((findHeader(list[i][parentNode]) || {}).innerHTML) &&
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
-        injectHTML(list[i], tinydown(trim.call(list[i].textContent || list[i].innerText)));
+        list[i].innerHTML = normalized(tinydown(trim.call(list[i].textContent || list[i].innerText)));
       } else {
         list[i].style.whiteSpace = 'normal';
       }
     }
-  }
-  function injectHTML(node, html) {
-    if (addEventListener in window) {
-      html = html.replace(
-        pre, '<pre class="code">$1</pre>'
-      );
-    }
-    node.innerHTML = html;
   }
   function findHeader(previousSibling) {
     while(previousSibling && previousSibling.nodeName !== "H2") {
@@ -57,6 +48,10 @@
   var Date = window.Date,
       RegExp = window.RegExp,
       document = window.document,
+      addEventListener = 'addEventListener',
+      normalized = addEventListener in window ? function (text) {
+        return text.replace(pre, '<pre class="code">$1</pre>');
+      } : String,
       ignoreSince = new Date(2013, 3, 11).getTime(),
       trim = ''.trim || function () {
         return this.replace(trimRE);
