@@ -6,6 +6,7 @@
         querySelectorAll = 'querySelectorAll',
         getElementsByClassName = 'getElementsByClassName',
         getElementsByTagName = 'getElementsByTagName',
+        pre = /<pre><code( class="[^"]+?")>/,
         div, list, i, length;
     if (querySelectorAll in document) {
       list = document[querySelectorAll]([tagName, className].join('.'));
@@ -33,7 +34,9 @@
         re.test((findHeader(list[i][parentNode]) || {}).innerHTML) &&
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
-        list[i].innerHTML = tinydown(trim.call(list[i].textContent || list[i].innerText));
+        list[i].innerHTML = tinydown(trim.call(list[i].textContent || list[i].innerText)).replace(
+          pre, '<pre class="code"><code$1'
+        );
       }
     }
   }
