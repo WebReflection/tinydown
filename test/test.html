@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="build/tinydown.max.js"></script>
+    <style type="text/css">
+    html, body {
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+    body {
+      font-family: sans-serif;
+    }
+    textarea {
+      height: 200px;
+    }
+    textarea, div {
+      margin: 2%;
+      width: 95%;
+    }
+    pre, code {
+      background-color: #EEE;
+    }
+    pre, blockquote {
+      padding: 8px;
+    }
+    blockquote {
+      background-color: rgba(255, 255, 150, .2);
+    }
+    blockquote p {
+      margin: 0;
+    }
+    </style>
+  </head>
+  <body>
+    <textarea></textarea>
+    <center><a href="#">link to this text</a></center>
+    <div></div>
+    <script>
+    (function ($) {
+      var
+        timer = 0,
+        document = window.document,
+        textarea = $('textarea'),
+        div = $('div'),
+        a = $('a'),
+        trim = /^\s+|\s+$/g;
+      function replace() {
+        var value = textarea.value.replace(trim, ''),
+            result;
+        a.href = location.href.split(/[?#]/)[0] + "?" + encodeURIComponent(value);
+        div.innerHTML = result = tinydown(value);
+        if (window.console) console.log(result);
+      }
+      function onkeyup() {
+        clearTimeout(timer);
+        timer = setTimeout(replace, 500);
+      }
+      textarea.onkeyup = onkeyup;
+      if (/[?#](.+)$/.test(location.href)) {
+        textarea.value = decodeURIComponent(RegExp.$1);
+        onkeyup();
+      }
+    }(function(what){
+      return document.getElementsByTagName(what)[0];
+    }));
+    </script>
+  </body>
+</html>
