@@ -34,7 +34,7 @@
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
         tmp = normalized(tinydown(trim.call(list[i].textContent || list[i].innerText)));
-        if (window.console) console.log(tmp);
+        //if (window.console) console.log(tmp);
         list[i].innerHTML = tmp;
       } else {
         list[i].style.whiteSpace = 'normal';
@@ -58,7 +58,7 @@
       trim = ''.trim || function () {
         return this.replace(trimRE);
       },
-      trimRE = /^\s+|\s+$/g,
+      trimRE = /^[\s\xA0]+|[\s\xA0]+$/g,
       pre = /<pre><code(?: class="[^"]+?")>([^\x00]+?)<\/code><\/pre>/g,
       br = /<br\/>/g,
       preplace = function (m, $1) {
