@@ -94,6 +94,7 @@ var tinydown = function(){
       "  +" + N, G,
       "([_*]{1,2})(?!\\s)([^\\2]+?)(\\1)", G,
       "!?" + LINK, GM,
+      "(^|\\s)@([_a-zA-Z]+)(\\s|$)", GM,
       SL + "(&gt; )" + ALL + NOT_AFTER, G,
       SL + "(?!<|\\x00|\\x01|\\x02|\\x03|\\x04)([^\\x00]*?)(?=" + NL + "{2,})", G
     ],
@@ -153,6 +154,7 @@ var tinydown = function(){
         }
         return m;
       },
+      '$1<a href="https://twitter.com/$2">@$2</a>',
       null,
       c2 + "$1" + c2
     ],
@@ -230,7 +232,7 @@ var tinydown = function(){
         "11": function (m, $1, $2) {
           return four.push($2) && c4;
         },
-        "16": function(m, $1, $2) {
+        "17": function(m, $1, $2) {
           return bquote.push(strim.call($2.charAt(0) + $2.slice(1).replace(commonBlocks[$1], ''))) && c3;
         }
       },
