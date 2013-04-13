@@ -35,6 +35,9 @@
       ) {
         list[i].innerHTML = tinydown(trim.call(list[i].textContent || list[i].innerText)).replace(
           pre, '<pre class="code">$1</pre>'
+        ).replace(
+          window.attachEvent ?
+            /<\/code><\/pre>\s*<pre><code>/g : /^\x00/, ''
         );
       } else {
         list[i].style.whiteSpace = 'normal';
@@ -58,7 +61,7 @@
       pre = /<pre><code(?: class="[^"]+?")>([^\x00]+?)<\/code><\/pre>/g,
       br = /<br\/>/g,
       preplace = function (m, $1) {
-        return '<pre class="code">' + $1.replace(br, '\n') + '</pre>';
+        return '<pre class="code">' + trim.call($1.replace(br, '\n')) + '</pre>';
       },
       months = {
         'January':0,
