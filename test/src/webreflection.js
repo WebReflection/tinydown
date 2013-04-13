@@ -3,6 +3,7 @@
     var tagName = 'div',
         className = 'post-body',
         parentNode = 'parentNode',
+        addEventListener = 'addEventListener',
         querySelectorAll = 'querySelectorAll',
         getElementsByClassName = 'getElementsByClassName',
         getElementsByTagName = 'getElementsByTagName',
@@ -33,16 +34,19 @@
         re.test((findHeader(list[i][parentNode]) || {}).innerHTML) &&
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
-        list[i].innerHTML = tinydown(trim.call(list[i].textContent || list[i].innerText)).replace(
-          pre, '<pre class="code">$1</pre>'
-        ).replace(
-          window.attachEvent ?
-            /<\/code><\/pre>(\s*)<pre><code>/g : /^(\x00)?/, '$1'
-        );
+        injectHTML(list[i], tinydown(trim.call(list[i].textContent || list[i].innerText)));
       } else {
         list[i].style.whiteSpace = 'normal';
       }
     }
+  }
+  function injectHTML(node, html) {
+    if (addEventListener in window) {
+      html = html.replace(
+        pre, '<pre class="code">$1</pre>'
+      );
+    }
+    node.innerHTML = html;
   }
   function findHeader(previousSibling) {
     while(previousSibling && previousSibling.nodeName !== "H2") {
@@ -79,7 +83,7 @@
       },
       re = '',
       done = false,
-      add = window.addEventListener || window.attachEvent,
+      add = window[addEventListener] || window.attachEvent,
       parsePosts = function () {
         if (!done) {
           done = true;
