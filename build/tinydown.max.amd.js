@@ -108,12 +108,13 @@ define(function(){
       "<hr/>",
       function(m, $1, $2, $3, $4, $5) {
         tmp = "<li>" + tinydown($3.replace(s, "")).replace(sl, "<br/>") + "</li>";
-        // TODO: no, does nto start from here ... 
-        if ($4 === 0) {
+        if (LIST === "") {
           LIST = num.test($2) ? '<ol>' : '<ul>';
           tmp = LIST + tmp;
-        } else if ($5.length - ($4 + m.length) < 2) {
+        }
+        if (!re[9].test($5.slice($4 + m.length))) {
           tmp += LIST.replace("<", "</");
+          LIST = "";
         }
         return tmp;
       },
