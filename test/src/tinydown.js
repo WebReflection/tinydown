@@ -1,6 +1,7 @@
 function(){
   /* jshint loopfunc: true */
   for(var
+    lastList = 0,
     uniqueId = 0,
     WEB = typeof document !== 'undefined',
     documentElement = WEB && document.documentElement,
@@ -20,6 +21,7 @@ function(){
     re1 = /\x01/g,
     re2 = /\x02([^\x00]*?)\x02/g,
     re3 = /<blockquote\/>/g,
+    loadedComplete = /^loaded|complete$/,
     // youtube, gist
     youtube = /^https?:\/\/(?:www\.)?youtu(?:\.be|be\.com)\/(?:watch\?v=|embed\/)?(\w+).*$/,
     gist = /https?:\/\/gist\.github\.com\/[^\x00]+?\/(\d+)(\.js)?$/,
@@ -59,7 +61,7 @@ function(){
       "^" + ANYTHING + "=+" + NL, GM,
       "^" + ANYTHING + "-+" + NL, GM,
       "^(?:\\* \\* |- - |\\*\\*|--)[-*][-* ]*" + NL, GM,
-      SL + "( *)(\\* |\\+ |- |\\d+. )" + ALL + "(?=" + LF + "(?!\\1  )|$)", G,
+      SL + "( {0,3})(\\* |\\+ |- |\\d+. )" + ALL + "(?=" + LF + "(?!\\1  )|$)", G,
       SL + "(\\t| {4})" + ALL + NOT_AFTER, G,
       "(`{1,2})([^\\r\\n]+?)\\1", GM,
       "^(#{1,6})\\s+" + ANYTHING, GM,
@@ -84,11 +86,13 @@ function(){
       "<hr/>",
       function(m, $1, $2, $3, $4, $5) {
         tmp = "<li>" + tinydown($3.replace(s, "")).replace(sl, "<br/>") + "</li>";
-        if ($4 === 0) {
+        if (LIST === "") {
           LIST = num.test($2) ? '<ol>' : '<ul>';
           tmp = LIST + tmp;
-        } else if ($5.length - ($4 + m.length) < 2) {
+        }
+        if (!re[9].test($5.slice($4 + m.length))) {
           tmp += LIST.replace("<", "</");
+          LIST = "";
         }
         return tmp;
       },
@@ -147,7 +151,7 @@ function(){
     this.error = true;
   }
   function onreadystatechange() {
-    if (/loaded|complete/.test(this.readyState)) {
+    if (loadedComplete.test(this.readyState)) {
       onload.call(this);
     }
   }
@@ -198,7 +202,7 @@ function(){
       },
       i = 0; i < re.length; i++
     ) {
-      //console.log(re[i], string, place[i]);
+      //console.log(re[i], string, place[i], string.replace(re[i], place[i] || special[i]));
       string = string.replace(re[i], place[i] || special[i]);
     }
     return string.
