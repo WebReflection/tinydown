@@ -6,7 +6,6 @@
         querySelectorAll = 'querySelectorAll',
         getElementsByClassName = 'getElementsByClassName',
         getElementsByTagName = 'getElementsByTagName',
-        pre = /<pre><code( class="[^"]+?")>/,
         div, list, i, length;
     if (querySelectorAll in document) {
       list = document[querySelectorAll]([tagName, className].join('.'));
@@ -35,7 +34,7 @@
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
         list[i].innerHTML = tinydown(trim.call(list[i].textContent || list[i].innerText)).replace(
-          pre, '<pre class="code"><code$1'
+          pre, '<pre class="code">$1</pre>'
         );
       }
     }
@@ -54,6 +53,11 @@
         return this.replace(trimRE);
       },
       trimRE = /^\s+|\s+$/g,
+      pre = /<pre><code(?: class="[^"]+?")>([^\x00]*+?)<\/code><\/pre>/,
+      br = /<br\/>/g,
+      preplace = function (m, $1) {
+        return '<pre class="code">' + $1.replace(br, '\n') + '</pre>';
+      },
       months = {
         'January':0,
         'February':1,
