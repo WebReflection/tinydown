@@ -23,6 +23,10 @@ THE SOFTWARE.
 var tinydown = function(){
   /* jshint loopfunc: true */
   for(var
+    uniqueId = 0,
+    WEB = typeof document !== 'undefined',
+    documentElement = WEB && document.documentElement,
+    WRITE = "write",
     // constants
     PRE_CODE = "<pre><code",
     CODE_PRE = "</code></pre>",
@@ -38,6 +42,9 @@ var tinydown = function(){
     re1 = /\x01/g,
     re2 = /\x02([^\x00]*?)\x02/g,
     re3 = /<blockquote\/>/g,
+    // youtube, gist
+    youtube = /^https?:\/\/(?:www\.)?youtu(?:\.be|be\.com)\/(?:watch\?v=|embed\/)?(\w+).*$/,
+    gist = /https?:\/\/gist\.github\.com\/[^\x00]+?\/(\d+)(\.js)?$/,
     N = "\n",
     LF = "\\r\\n|\\r|\\n",
     SL = "(?:^|" + LF + ")",
@@ -117,10 +124,37 @@ var tinydown = function(){
         return "<" + (t = c.length == 2 ? "strong>" : "em>") + s + "</" + t;
       },
       function (m, $1, $2, $3, $4) {
-        return m.charAt(0) === '!' ?
-          '<img src="' + $2 + '" alt="' + $1 + '" title="' + $4 + '"/>' :
-          '<a href="' + $2 + '" title="' + $4 + '">' + $1 + '</a>'
-        ;
+        if (m.charAt(0) === '!') {
+          if (youtube.test($2)) {
+            m = '<iframe style="max-width:560px;max-height:315px;" src="' + $2.replace(
+              youtube, 'http://www.youtube.com/embed/$1'
+            ) + '" frameborder="0" allowfullscreen>' + $1 + '</iframe>';
+          } else if(gist.test($2)) {
+            if (WEB) {
+              var
+                id = 'tinydown' + uniqueId++,
+                script = documentElement.insertBefore(
+                  document.createElement("script"),
+                  documentElement.lastChild
+                );
+              script.type = "text/javascript";
+              script.id = id;
+              script.onload = onload;
+              script.onerror = onerror;
+              script.onreadystatechange = onreadystatechange;
+              script.src = $2.replace(RegExp.$1 + RegExp.$2, RegExp.$1 + ".js");
+              m = '<br id="_' + id + '"/>';
+              document[WRITE] = replaceContentAndWrite(document[WRITE], id, []);
+            } else {
+              m = '<script src="' + $2 + '"><!-- ' + $1 + ' --></script>';
+            }
+          } else {
+            m = '<img src="' + $2 + '" alt="' + $1 + '" title="' + $4 + '"/>';
+          }
+        } else {
+          m = '<a href="' + $2 + '" title="' + $4 + '">' + $1 + '</a>';
+        }
+        return m;
       },
       null,
       c2 + "$1" + c2
@@ -128,6 +162,42 @@ var tinydown = function(){
     tmp,
     i = 0; i < find.length; re.push(new RegExp(find[i++], find[i++]))
   );
+  function onload() {
+    this.loaded = true;
+  }
+  function onerror() {
+    this.error = true;
+  }
+  function onreadystatechange() {
+    if (/loaded|complete/.test(this.readyState)) {
+      onload.call(this);
+    }
+  }
+  function replaceContentAndWrite(write, id, out){
+    var calls = 0, node, div;
+    return function (content) {
+      out.push(content);
+      if (++calls === 2) {
+        (function seekAndDestroy(){
+          if (
+            node || (node = document.getElementById(id)) && (
+              node.loaded || node.error
+          )) {
+            node.parentNode.removeChild(node);
+            node = document.getElementById("_" + id);
+            if (node) {
+              div = document.createElement('div');
+              div.innerHTML = out.join(N);
+              node.parentNode.replaceChild(div, node);
+            }
+          } else {
+            setTimeout(seekAndDestroy, 1000);
+          }
+        }());
+        document[WRITE] = write;
+      }
+    };
+  }
   function paragraphs(m, $1) {
     $1 = strim.call($1);
     return $1.length ? ($1.charAt(0) === "<" ? $1 : "<p>" + $1 + "</p>") : "";
