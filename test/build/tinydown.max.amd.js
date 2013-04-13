@@ -123,7 +123,7 @@ define(function(){
       function (m, $1, $2, $3, $4) {
         if (m.charAt(0) === '!') {
           if (youtube.test($2)) {
-            m = '<iframe style="max-width:560px;max-height:315px;" src="' + $2.replace(
+            m = '<iframe width="560" height="315" src="' + $2.replace(
               youtube, 'http://www.youtube.com/embed/$1'
             ) + '" frameborder="0" allowfullscreen>' + $1 + '</iframe>';
           } else if(gist.test($2)) {
