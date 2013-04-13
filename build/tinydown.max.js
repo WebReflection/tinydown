@@ -208,7 +208,8 @@ var tinydown = function(){
       list = [],
       special = {
         "5": function (m, $1, $2) {
-          return ($1.length ? zero.push(c0, $1, $2 + N) : zero.push($2 + N)) && c0;
+          strim.call($2);
+          return ($1.length ? zero.push(c0, $1, $2) : zero.push($2)) && c0;
         },
         "9": function(m, $1, $2, $3, $4, $5) {
           list.push(tinydown($3.replace(s, "")).replace(sl, "<br/>"));
@@ -224,7 +225,7 @@ var tinydown = function(){
           return tmp;
         },
         "10": function (m, $1, $2) {
-          return one.push($2.replace(commonBlocks[$1], '') + N) && c1;
+          return one.push(strim.call($2.replace(commonBlocks[$1], ''))) && c1;
         },
         "11": function (m, $1, $2) {
           return four.push($2) && c4;
