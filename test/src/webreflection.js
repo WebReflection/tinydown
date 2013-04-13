@@ -33,7 +33,7 @@
         re.test((findHeader(list[i][parentNode]) || {}).innerHTML) &&
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
-        list[i].innerHTML = tinydown(list[i].textContent || list[i].innerText);
+        list[i].innerHTML = tinydown(trim.call(list[i].textContent || list[i].innerText));
       }
     }
   }
@@ -47,6 +47,10 @@
       RegExp = window.RegExp,
       document = window.document,
       ignoreSince = new Date(2013, 3, 11).getTime(),
+      trim = ''.trim || function () {
+        return this.replace(trimRE);
+      },
+      trimRE = /^\s+|\s+$/g,
       months = {
         'January':0,
         'February':1,
