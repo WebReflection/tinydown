@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <script src="build/tinydown.max.js"></script>
+    <script src="build/tinydown.js"></script>
     <style type="text/css">
     body {
       font-family: sans-serif;
@@ -15,6 +15,9 @@
     textarea, div {
       margin: 2%;
       width: 95%;
+    }
+    li {
+      padding: 2px;
     }
     h2 {
       border-bottom: 1px solid #DDD;
@@ -40,6 +43,14 @@
     blockquote p {
       margin: 0;
     }
+    div.gist, div.gist * {
+      margin: 0;
+      padding: 0;
+    }
+    iframe {
+      border: 8px solid #DDD;
+      margin: 8px;
+    }
     </style>
   </head>
   <body>
@@ -60,22 +71,25 @@ Initially ideated to write markdown on blogger or other online platforms, this f
     the possibility to go new line preserving the list item
       1. so that this becomes a nested item
       2. and this one too
-  * _em_ and __strong__ with both * and _ form
+  * _em_ and __strong__ via single or double * or _
   * paragraphs to keep the semantic right
   * blockquotes and nested block quotes
   * links and images
-  * youtube embedded videos
-  * gists from github, hacking the `document.write` like a boss so you can do that on the fly regardless
   * hr, br, h1, h2, h3, h4, h5, and h6
   * code blocks, `inline blocks`, and ``tick`box``
-  * basically all you can do with markdown in a sort of simplified way
+  * basically all you can do with markdown in a sort of simplified way ... **plus** 
+  * **youtube** embedded videos, i.e. `![noniframe cotent](http://www.youtube.com/watch?v=bRt5z880CFY)`
+    ![alternative cotent](http://www.youtube.com/watch?v=bRt5z880CFY)
+  * __gists__ from github, hacking the `document.write` like a boss so you can do that on the fly regardless
+    `![just a gist](https://gist.github.com/WebReflection/5379375)` will produce
+    ![just a gist](https://gist.github.com/WebReflection/5379375)
 
 
 You can also try [the test page](http://webreflection.github.io/tinydown/test/test.html) able to show this own layout on the fly.
 - - -
 enjoy
 
-&copy; Mit Style WebReflection
+© Mit Style WebReflection
     </textarea>
     <center><a href="#">link to this text</a></center>
     <div></div>
