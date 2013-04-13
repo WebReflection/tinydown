@@ -53,7 +53,7 @@
         return this.replace(trimRE);
       },
       trimRE = /^\s+|\s+$/g,
-      pre = /<pre><code(?: class="[^"]+?")>([^\x00]*+?)<\/code><\/pre>/,
+      pre = /<pre><code(?: class="[^"]+?")>([^\x00]+?)<\/code><\/pre>/g,
       br = /<br\/>/g,
       preplace = function (m, $1) {
         return '<pre class="code">' + $1.replace(br, '\n') + '</pre>';
