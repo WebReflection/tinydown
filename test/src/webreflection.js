@@ -37,7 +37,7 @@
           pre, '<pre class="code">$1</pre>'
         ).replace(
           window.attachEvent ?
-            /<\/code><\/pre>\s*<pre><code>/g : /^\x00/, ''
+            /<\/code><\/pre>(\s*)<pre><code>/g : /^(\x00)?/, '$1'
         );
       } else {
         list[i].style.whiteSpace = 'normal';
