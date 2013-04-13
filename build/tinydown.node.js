@@ -145,11 +145,7 @@ var tinydown = function(){
           return one.push($2.replace(commonBlocks[$1], '') + N) && c1;
         },
         "16": function(m, $1, $2) {
-          bquote.push(strim.call($2.charAt(0) + $2.slice(1).replace(commonBlocks[$1], '')));
-          return c3;
-          return bquote.push("<" + BLOCKQUOTE + tinydown(
-            strim.call($2.charAt(0) + $2.slice(1).replace(commonBlocks[$1], ''))
-          ) + "</" + BLOCKQUOTE) && c3;
+          return bquote.push(strim.call($2.charAt(0) + $2.slice(1).replace(commonBlocks[$1], ''))) && c3;
         }
       },
       i = 0; i < re.length; i++
