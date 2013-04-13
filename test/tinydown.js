@@ -8,7 +8,7 @@ wru.test([
     test: function () {
       wru.assert(typeof tinydown == "function");
       for (var test = [
-        //'ol', 'this\n * is\n * a\ntest', ''
+        //'ol', ' * **youtube** embedded videos\n   `![alternative cotent](http://www.youtube.com/watch?v=bRt5z880CFY)`', ''
         //*
         '-h2', 'hello\n---\n', '<h2>hello</h2>',
         '- hr', '- - -', '<hr/>',
