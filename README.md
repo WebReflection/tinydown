@@ -21,6 +21,7 @@ Initially ideated to write markdown on blogger or other online platforms, this f
   * hr, br, h1, h2, h3, h4, h5, and h6
   * code blocks, `inline blocks`, and ``tick`box``
   * basically all you can do with markdown in a sort of simplified way ... **plus** 
+  * **twitter** handlers, just `@handler` and a link to the profile will be created, ie @WebReflection
   * **youtube** embedded videos, i.e. `![noniframe cotent](http://www.youtube.com/watch?v=bRt5z880CFY)`
     ![alternative cotent](http://www.youtube.com/watch?v=bRt5z880CFY)
   * __gists__ from github, hacking the `document.write` like a boss so you can do that on the fly regardless

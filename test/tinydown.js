@@ -43,11 +43,12 @@ wru.test([
         'link quoted', '[$text]($href "$title")', '<a href="$href" title="$title">$text</a>',
         'link', '[$text]($href $title)', '<a href="$href" title="$title">$text</a>',
         'blockquote', '> here a blockuote', '<blockquote><p>here a blockuote</p></blockquote>',
+        'tweet handler', '@WebReflection', '<a href="https://twitter.com/WebReflection">@WebReflection</a>',
         // TODO: fix this .. maybe ... 
         'nested blockquote', '> here a blockuote\n> > with a block quote', '<blockquote><p>here a blockuote<blockquote><p>with a block quote</p></blockquote></p></blockquote>'
         //*/
       ], i = 0; i < test.length; i += 3) {
-        //wru.log(tinydown(test[i + 1]));
+        wru.log(tinydown(test[i + 1]));
         wru.assert(test[i], tinydown(test[i + 1]) === test[i + 2]);
       }
     }
