@@ -20,75 +20,136 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-define(function(){return 
-/**
- * Just a tiny markdown like parser.
- * @example tinydown(node.textContent || textarea.value || genericString)
- * @param   {string} input the generic text to parse via markdown
- * @return  {string} the input as html
- */
-function tinydown(input) {"use strict";
+define(function(){
   /* jshint loopfunc: true */
   for(var
-    // some common RegExp shortcut
+    // constants
+    PRE_CODE = "<pre><code",
     CODE_PRE = "</code></pre>",
     BLOCKQUOTE = "blockquote>",
-    NL = "(?:\\r\\n|\\r|\\n|$)",
-    LINK = "\\[(.*?)\\]\\((.+?)(?: (&(?:quot|apos);)(.+?)(\\3))?\\)",
+    TRIPLETICK = "```",
+    LIST = "",
+    c0 = "\x00",
+    c1 = "\x01",
+    // some common RegExp shortcut
+    re0 = /\x00/g,
+    re1 = /\x01/g,
+    N = "\n",
+    LF = "\\r\\n|\\r|\\n",
+    SL = "(?:^|" + LF + ")",
+    NL = "(?:$|" + LF + ")",
+    NOT_AFTER = "(?:" + LF + "(?!\\1)|$)",
+    ALL = "([^\\x00]*?)",
+    LINK = "\\[(.*?)\\]\\((.+?)(?: (&(?:quot|apos);)?(.+?)(\\3))?\\)",
     ANYTHING = "(.+?)" + NL,
-    // temporary container for code blocks ... these won't be parsed
-    L = [],
-    // list of search, replacement for the given input
-    re = [
-      // make HTML safe
-      "&(?!#?[a-z0-9]+;)", "&amp;",
-      "<", "&lt;",
-      ">", "&gt;",
-      '"', "&quot;",
-      "'", "&apos;",
-      // drop code blocks from the input, no parsing required
-      "^(?:\\t| {4})" + ANYTHING, function(m, s){return L.push(s + "\n") && "\0";},
-      // parse H1 and H2
-      "^" + ANYTHING + "=+" + NL, "<h1>$1</h1>\n",
-      "^" + ANYTHING + "-+" + NL, "<h2>$1</h2>\n",
-      // parse H1, H2, H3, H4, H5, H6 with other notation
-      "^(#+)\\s*" + ANYTHING, function(m, c, s, t){
-        return "<h" + (t = c.length) + ">" + s.replace(/#+$/, "") + "</h" + t + ">\n";
+    // flags
+    G = "g",
+    GM = G + "m",
+    // reused common blocks regexp
+    commonBlocks = {
+      "\t":   /^\t/gm,
+      "    ": /^    /gm,
+      "&gt; ":   /^&gt; /gm
+    },
+    header = /^#+$/,
+    num = /^\d/,
+    s = /  +/g,
+    sl = new RegExp("(?:^" + LF + ")", GM),
+    // find strings
+    find = [
+      "&(?!#?[a-z0-9]+;)", G,
+      "<", G,
+      ">", G,
+      '"', G,
+      "'", G,
+      SL + TRIPLETICK + "([a-zA-Z]*)(?:" + LF + ")" + ALL + "(?:" + LF + ")" + TRIPLETICK + NL, G,
+      "^" + ANYTHING + "=+" + NL, GM,
+      "^" + ANYTHING + "-+" + NL, GM,
+      "^(?:\\* \\* |- - |\\*\\*|--)[-*][-* ]*" + NL, GM,
+      SL + "( *)(\\* |\\+ |- |\\d+. )" + ALL + "(?=" + LF + "(?!\\1  )|$)", G,
+      SL + "(\\t| {4})" + ALL + NOT_AFTER, G,
+      "(`{1,2})([^\\r\\n]+?)\\1", GM,
+      "^(#{1,6})\\s+" + ANYTHING, GM,
+      "  +" + NL, G,
+      "([_*]{1,2})([^\\2]+?)(\\1)", G,
+      "!?" + LINK, GM,
+      SL + "(&gt; )" + ALL + NOT_AFTER, G
+    ],
+    // the list of RegExp objects
+    re = [],
+    // what to replace
+    place = [
+      "&amp;",
+      "&lt;",
+      "&gt;",
+      "&quot;",
+      "&apos;",
+      null,
+      "<h1>$1</h1>",
+      "<h2>$1</h2>",
+      "<hr/>" + N,
+      function(m, $1, $2, $3, $4, $5) {
+        tmp = "<li>" + tinydown($3.replace(s, "")).replace(sl, "<br/>" + N) + "</li>" + N;
+        if ($4 === 0) {
+          LIST = num.test($2) ? '<ol>' : '<ul>';
+          tmp = LIST + N + tmp;
+        } else if ($5.length - ($4 + m.length) < 2) {
+          tmp += LIST.replace("<", "</");
+        }
+        return tmp;
       },
-      // parse HR lines
-      "(?:\\* \\* |- - |\\*\\*|--)[-*][-* ]*" + NL, "<hr/>\n",
-      // parse manual br
-      "  +" + NL, "<br/>",
-      // parse ordered and unordered lists
-      "^ *(\\* |\\+ |- |\\d+. )" + ANYTHING, function(m, c, s, t){
-        return "<" + (t = /^\d/.test(c) ? "ol>" : "ul>") + "<li>" + tinydown(s) + "</li></" + t;
+      null,
+      "<code>$2</code>",
+      function (m, c, s, t) {
+        return "<h" + (t = c.length) + ">" + s.replace(header, "") + "</h" + t + ">";
       },
-      // remove superflous parsing
-      "</(ul|ol)>\\s*<\\1>", "",
-      // parse strong and em
-      "([_*]{1,2})([^\\2]+?)(\\1)", function(m, c, s, t){
+      "<br/>" + N,
+      function (m, c, s, t) {
         return "<" + (t = c.length == 2 ? "strong>" : "em>") + s + "</" + t;
       },
-      // parse images
-      "!" + LINK, '<img src="$2" alt="$1" title="$4"/>',
-      // parse links
-      LINK, '<a href="$2" title="$4">$1</a>',
-      // parse blockquotes
-      "^&gt; " + ANYTHING, function(m, s){
-        return "<" + BLOCKQUOTE + tinydown(s)+ "</" + BLOCKQUOTE;
+      function (m, $1, $2, $3, $4) {
+        return m.charAt(0) === '!' ?
+          '<img src="' + $2 + '" alt="' + $1 + '" title="' + $4 + '"/>' :
+          '<a href="' + $2 + '" title="' + $4 + '">' + $1 + '</a>'
+        ;
       },
-      // remove superflous parsing
-      "</" + BLOCKQUOTE + "\\s*<" + BLOCKQUOTE, "",
-      // parse backtick for inline code
-      "(`{1,2})([^\\r\\n]+?)\\1", "<code>$2</code>",
-      // put back blocks of code
-      "\\0", function(s){
-        return "<pre><code>" + L.shift() + CODE_PRE;
-      },
-      // clean up superflous parsing
-      CODE_PRE + "\\s*<pre><code>", ""
+      function(m, $1, $2) {
+        return "<" + BLOCKQUOTE + tinydown($2.replace(commonBlocks[$1], '')) + "</" + BLOCKQUOTE;
+      }
     ],
-    i = 0; i < re.length;
-  ) input = input.replace(new RegExp(re[i++], "gm"), re[i++]);
-  return input;
-}});
+    tmp,
+    i = 0; i < find.length; re.push(new RegExp(find[i++], find[i++]))
+  );
+  function tinydown(string) {
+    for (var
+      zero = [],
+      one = [],
+      special = {
+        "5": function (m, $1, $2) {
+          return ($1.length ? zero.push(c0, $1, $2 + N) : zero.push($2 + N)) && c0;
+        },
+        "10": function (m, $1, $2) {
+          return one.push($2.replace(commonBlocks[$1], '') + N) && c1;
+        }
+      },
+      i = 0; i < re.length; i++
+    ) {
+      //console.log(re[i], string, place[i]);
+      string = string.replace(re[i], place[i] || special[i]);
+    }
+    return string.
+      replace(re0, function(s){
+        s = zero.shift();
+        return N + (
+          s === c0 ?
+            PRE_CODE + ' class="' + zero.shift() + '">' + zero.shift() :
+            PRE_CODE + ">" + s
+          ) + CODE_PRE + N;
+        }).
+        replace(re1, function(s){
+          return N + PRE_CODE + ">" + one.shift() + CODE_PRE + N;
+        })
+      ;
+  }
+  return tinydown;
+});
