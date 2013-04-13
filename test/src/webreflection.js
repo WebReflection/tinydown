@@ -36,6 +36,8 @@
         list[i].innerHTML = tinydown(trim.call(list[i].textContent || list[i].innerText)).replace(
           pre, '<pre class="code">$1</pre>'
         );
+      } else {
+        list[i].style.whiteSpace = 'normal';
       }
     }
   }
