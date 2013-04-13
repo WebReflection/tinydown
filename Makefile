@@ -24,6 +24,10 @@ build:
 	make test
 	make hint
 	make size
+	make wr
+
+wr:
+	node node_modules/uglify-js/bin/uglifyjs --verbose src/webreflection.js >build/wr.js
 
 # build generic version
 var:

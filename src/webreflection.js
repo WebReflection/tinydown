@@ -1,0 +1,81 @@
+!function (window) {
+  function findPosts() {
+    var tagName = 'div',
+        className = 'post-body',
+        parentNode = 'parentNode',
+        querySelectorAll = 'querySelectorAll',
+        getElementsByClassName = 'getElementsByClassName',
+        getElementsByTagName = 'getElementsByTagName',
+        div, list, i, length;
+    if (querySelectorAll in document) {
+      list = document[querySelectorAll]([tagName, className].join('.'));
+    } else if (getElementsByClassName in document) {
+      list = document[getElementsByClassName](className);
+    } else {
+      for(
+        div = document[getElementsByTagName]('div'),
+        list = [],
+        i = 0,
+        length = div.length;
+        i < length; i++
+      ) {
+        if (~div[i].className.indexOf(className)) {
+          list.push(div[i]);
+        }
+      }
+    }
+    for(
+      i = 0,
+      length = list.length;
+      i < length; i++
+    ) {
+      if (
+        re.test((findHeader(list[i][parentNode]) || {}).innerHTML) &&
+        ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
+      ) {
+        list[i].innerHTML = tinydown(list[i].textContent || list[i].innerText);
+      }
+    }
+  }
+  function findHeader(previousSibling) {
+    while(previousSibling && previousSibling.nodeName !== "H2") {
+      previousSibling = previousSibling.previousSibling;
+    }
+    return previousSibling;
+  }
+  var Date = window.Date,
+      RegExp = window.RegExp,
+      document = window.document,
+      ignoreSince = new Date(2013, 3, 11).getTime(),
+      months = {
+        'January':0,
+        'February':1,
+        'March':2,
+        'April':3,
+        'May':4,
+        'June':5,
+        'July':6,
+        'August':7,
+        'September':8,
+        'October':9,
+        'November':10,
+        'December':11
+      },
+      re = '',
+      done = false,
+      add = window.addEventListener || window.attachEvent,
+      parsePosts = function () {
+        if (!done) {
+          done = true;
+          findPosts();
+        }
+      },
+      key;
+  for (key in months) {
+    re += "|" + key;
+  }
+  re = new RegExp("(" + re.slice(1) + ")\\s+(\\d+),\\s+(\\d+)");
+  add('DOMContentLoaded', parsePosts);
+  add('onload', parsePosts);
+  add('load', parsePosts);
+}(this);
