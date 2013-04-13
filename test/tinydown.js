@@ -44,7 +44,7 @@ wru.test([
         // TODO: fix this .. maybe ... 
         'nested blockquote', '> here a blockuote\n> > with a block quote', '<blockquote><p>here a blockuote<blockquote><p>with a block quote</p></blockquote></p></blockquote>'
       ], i = 0; i < test.length; i += 3) {
-        //wru.log(tinydown(test[i + 1]));
+        wru.log(tinydown(test[i + 1]));
         wru.assert(test[i], tinydown(test[i + 1]) === test[i + 2]);
       }
     }
