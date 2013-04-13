@@ -8,7 +8,7 @@ wru.test([
     test: function () {
       wru.assert(typeof tinydown == "function");
       for (var test = [
-        //'ol', 'this\n * is\n * a\ntest', ''
+        //'ol', ' * **youtube** embedded videos\n   `![alternative cotent](http://www.youtube.com/watch?v=bRt5z880CFY)`', ''
         //*
         '-h2', 'hello\n---\n', '<h2>hello</h2>',
         '- hr', '- - -', '<hr/>',
@@ -47,7 +47,7 @@ wru.test([
         'nested blockquote', '> here a blockuote\n> > with a block quote', '<blockquote><p>here a blockuote<blockquote><p>with a block quote</p></blockquote></p></blockquote>'
         //*/
       ], i = 0; i < test.length; i += 3) {
-        wru.log(tinydown(test[i + 1]));
+        //wru.log(tinydown(test[i + 1]));
         wru.assert(test[i], tinydown(test[i + 1]) === test[i + 2]);
       }
     }

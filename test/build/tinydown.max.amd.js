@@ -38,11 +38,15 @@ define(function(){
     c1 = "\x01",
     c2 = "\x02",
     c3 = "<blockquote/>",
+    c4 = "\x04",
+    c5 = "\x05",
     // some common RegExp shortcut
     re0 = /\x00/g,
     re1 = /\x01/g,
     re2 = /\x02([^\x00]*?)\x02/g,
     re3 = /<blockquote\/>/g,
+    re4 = /\x04/g,
+    re5 = /\x05/g,
     loadedComplete = /^loaded|complete$/,
     // youtube, gist
     youtube = /^https?:\/\/(?:www\.)?youtu(?:\.be|be\.com)\/(?:watch\?v=|embed\/)?(\w+).*$/,
@@ -88,10 +92,10 @@ define(function(){
       "(`{1,2})([^\\r\\n]+?)\\1", GM,
       "^(#{1,6})\\s+" + ANYTHING, GM,
       "  +" + N, G,
-      "([_*]{1,2})([^\\2]+?)(\\1)", G,
+      "([_*]{1,2})(?!\\s)([^\\2]+?)(\\1)", G,
       "!?" + LINK, GM,
       SL + "(&gt; )" + ALL + NOT_AFTER, G,
-      SL + "(?!<)([^\\x00]*?)(?=" + NL + "{2,})", G
+      SL + "(?!<|\\x00|\\x01|\\x02|\\x03|\\x04)([^\\x00]*?)(?=" + NL + "{2,})", G
     ],
     // the list of RegExp objects
     re = [],
@@ -106,20 +110,9 @@ define(function(){
       "<h1>$1</h1>",
       "<h2>$1</h2>",
       "<hr/>",
-      function(m, $1, $2, $3, $4, $5) {
-        tmp = "<li>" + tinydown($3.replace(s, "")).replace(sl, "<br/>") + "</li>";
-        if (LIST === "") {
-          LIST = num.test($2) ? '<ol>' : '<ul>';
-          tmp = LIST + tmp;
-        }
-        if (!re[9].test($5.slice($4 + m.length))) {
-          tmp += LIST.replace("<", "</");
-          LIST = "";
-        }
-        return tmp;
-      },
       null,
-      "<code>$2</code>",
+      null,
+      null,
       function (m, c, s, t) {
         return "<h" + (t = c.length) + ">" + s.replace(header, "") + "</h" + t + ">";
       },
@@ -211,12 +204,30 @@ define(function(){
       zero = [],
       one = [],
       bquote = [],
+      four = [],
+      list = [],
       special = {
         "5": function (m, $1, $2) {
           return ($1.length ? zero.push(c0, $1, $2 + N) : zero.push($2 + N)) && c0;
         },
+        "9": function(m, $1, $2, $3, $4, $5) {
+          list.push(tinydown($3.replace(s, "")).replace(sl, "<br/>"));
+          tmp = "<li>" + c5 + "</li>";
+          if (LIST === "") {
+            LIST = num.test($2) ? '<ol>' : '<ul>';
+            tmp = LIST + tmp;
+          }
+          if (!re[9].test($5.slice($4 + m.length))) {
+            tmp += LIST.replace("<", "</");
+            LIST = "";
+          }
+          return tmp;
+        },
         "10": function (m, $1, $2) {
           return one.push($2.replace(commonBlocks[$1], '') + N) && c1;
+        },
+        "11": function (m, $1, $2) {
+          return four.push($2) && c4;
         },
         "16": function(m, $1, $2) {
           return bquote.push(strim.call($2.charAt(0) + $2.slice(1).replace(commonBlocks[$1], ''))) && c3;
@@ -224,7 +235,6 @@ define(function(){
       },
       i = 0; i < re.length; i++
     ) {
-      //console.log(re[i], string, place[i], string.replace(re[i], place[i] || special[i]));
       string = string.replace(re[i], place[i] || special[i]);
     }
     return string.
@@ -234,16 +244,22 @@ define(function(){
           s === c0 ?
             PRE_CODE + ' class="' + zero.shift() + '">' + zero.shift() :
             PRE_CODE + ">" + s
-          ) + CODE_PRE;
-        }).
-        replace(re1, function(s){
-          return PRE_CODE + ">" + one.shift() + CODE_PRE;
-        }).
-        replace(re2, paragraphs).
-        replace(re3, function () {
-          return "<" + BLOCKQUOTE + tinydown(bquote.shift()) + "</" + BLOCKQUOTE;
-        })
-      ;
+        ) + CODE_PRE;
+      }).
+      replace(re1, function(s){
+        return PRE_CODE + ">" + one.shift() + CODE_PRE;
+      }).
+      replace(re2, paragraphs).
+      replace(re3, function () {
+        return "<" + BLOCKQUOTE + tinydown(bquote.shift()) + "</" + BLOCKQUOTE;
+      }).
+      replace(re4, function () {
+        return "<code>" + four.shift() + "</code>";
+      }).
+      replace(re5, function () {
+        return list.shift();
+      })
+    ;
   }
   return tinydown;
 });
