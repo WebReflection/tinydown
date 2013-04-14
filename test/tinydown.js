@@ -44,6 +44,7 @@ wru.test([
         'link', '[$text]($href $title)', '<a href="$href" title="$title">$text</a>',
         'blockquote', '> here a blockuote', '<blockquote><p>here a blockuote</p></blockquote>',
         'tweet handler', '@WebReflection', '<a href="https://twitter.com/WebReflection">@WebReflection</a>',
+        'tweet event', '#WebReflection', '<a href="https://twitter.com/search?src=hash&q=%23WebReflection">#WebReflection</a>',
         // TODO: fix this .. maybe ... 
         'nested blockquote', '> here a blockuote\n> > with a block quote', '<blockquote><p>here a blockuote<blockquote><p>with a block quote</p></blockquote></p></blockquote>'
         //*/
