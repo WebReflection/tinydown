@@ -36,9 +36,8 @@
         tmp = normalized(tinydown(trim.call(list[i].textContent || list[i].innerText)));
         //if (window.console) console.log(tmp);
         list[i].innerHTML = tmp;
-      } else {
-        list[i].style.whiteSpace = 'normal';
       }
+      list[i].style.whiteSpace = 'normal';
     }
   }
   function findHeader(previousSibling) {
