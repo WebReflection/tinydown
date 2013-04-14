@@ -1,7 +1,7 @@
 !function (window) {
   function findPosts() {
     var tagName = 'div',
-        className = 'post',
+        className = 'post-body',
         parentNode = 'parentNode',
         querySelectorAll = 'querySelectorAll',
         getElementsByClassName = 'getElementsByClassName',
@@ -30,7 +30,7 @@
       i < length; i++
     ) {
       if (
-        re.test((findHeader(list[i][parentNode][parentNode]) || {}).innerHTML) &&
+        re.test((findHeader(list[i][parentNode][parentNode][parentNode]) || {}).innerHTML) &&
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
         tmp = normalized(tinydown(trim.call(list[i].textContent || list[i].innerText)));
