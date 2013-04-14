@@ -37,6 +37,7 @@
         //if (window.console) console.log(tmp);
         list[i].innerHTML = tmp;
       }
+      list[i].style.opacity = 1;
       list[i].style.whiteSpace = 'normal';
     }
   }
