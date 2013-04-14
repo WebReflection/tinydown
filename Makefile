@@ -90,15 +90,18 @@ pages:
 	cp -rf src ~/tmp/$(REPO)
 	cp -rf build ~/tmp/$(REPO)
 	cp -rf test ~/tmp/$(REPO)
+	cp -rf node_modules ~/tmp/$(REPO)
 	cp index.html ~/tmp/$(REPO)
 	cp .gitignore ~/tmp/$(REPO)
 	git checkout gh-pages
 	mkdir -p test
 	rm -rf test
 	cp -rf ~/tmp/$(REPO) test
-	rm -r ~/tmp/$(REPO)
+	rm -rf ~/tmp/$(REPO)
 	cp test/.gitignore ./
 	rm test/.gitignore
+	cp -rf test/node_modules ./
+	rm -rf test/node_modules
 	git add test
 	git add test/.
 	git commit -m 'automatic test generator'
