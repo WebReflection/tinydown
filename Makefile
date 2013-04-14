@@ -91,11 +91,14 @@ pages:
 	cp -rf build ~/tmp/$(REPO)
 	cp -rf test ~/tmp/$(REPO)
 	cp index.html ~/tmp/$(REPO)
+	cp .gitignore ~/tmp/$(REPO)
 	git checkout gh-pages
 	mkdir -p test
 	rm -rf test
 	cp -rf ~/tmp/$(REPO) test
 	rm -r ~/tmp/$(REPO)
+	cp test/.gitignore ./
+	rm test/.gitignore
 	git add test
 	git add test/.
 	git commit -m 'automatic test generator'
