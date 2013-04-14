@@ -155,9 +155,9 @@ define(function(){
         }
         return m;
       },
-      '$1<a href="https://twitter.com/$2">@$2</a>',
-      function (m, $1, $2) {
-        return $1 + '<a href="https://twitter.com/search?src=hash&q=' + encodeURIComponent($2) + '">' + $2 + '</a>';
+      '$1<a href="https://twitter.com/$2">@$2</a>$3',
+      function (m, $1, $2, $3) {
+        return $1 + '<a href="https://twitter.com/search?src=hash&q=' + encodeURIComponent($2) + '">' + $2 + '</a>' + $3;
       },
       null,
       c2 + "$1" + c2
