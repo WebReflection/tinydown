@@ -30,7 +30,16 @@ Initially ideated to write markdown on blogger or other online platforms, this f
 
 
 You can also try [the test page](http://webreflection.github.io/tinydown/test/test.html) able to show this own layout on the fly.
+
+### Compatibility
+Manually checked and tested over webOS, Android 2.X+, iOS 4+, IE 9+ Mobile, IE 9+ Desktop, Stock WebKit, Chrome and Mobile, Chropera, and all mobile are just OK.
+
+IE8 has a RegExp bug I don't care much and it appears only if you use tab or spaces for code instead of triple back ticks.
+
+If layout generation is a major concern, you need node.js or any other way to pre compile and serve the already parsed output.
+
 - - -
+
 enjoy
 
-© Mit Style WebReflection
+&copy; Mit Style WebReflection
