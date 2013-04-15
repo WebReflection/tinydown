@@ -33,13 +33,20 @@
         re.test((findHeader(list[i][parentNode][parentNode][parentNode]) || {}).innerHTML) &&
         ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
       ) {
-        tmp = normalized(tinydown(trim.call(list[i].textContent || list[i].innerText)));
-        //if (window.console) console.log(tmp);
-        list[i].innerHTML = tmp;
+        timeout(function (node) {
+          tmp = normalized(tinydown(trim.call(node.textContent || node.innerText)));
+          //if (window.console) console.log(tmp);
+          node.innerHTML = tmp;
+          opacity(node);
+        }, i * 300, list[i]);
+      } else {
+        timeout(opacity, i * 300, list[i]);
       }
-      list[i].style.opacity = 1;
       list[i].style.whiteSpace = 'normal';
     }
+  }
+  function opacity(node) {
+    node.style.opacity = 1;
   }
   function findHeader(previousSibling) {
     while(previousSibling && previousSibling.nodeName !== "H2") {
@@ -87,11 +94,20 @@
           findPosts();
         }
       },
+      timeout = setTimeout,
       key;
   for (key in months) {
     re += "|" + key;
   }
   re = new RegExp("(" + re.slice(1) + ")\\s+(\\d+),\\s+(\\d+)");
+  timeout(function(one){
+    if (!one) timeout = function (callback, delay) {
+      var args = [].slice.call(arguments, 2);
+      return setTimeout(function () {
+        callback.apply(this, args);
+      }, delay);
+    };
+  },0,1);
   add('DOMContentLoaded', parsePosts);
   add('onload', parsePosts);
   add('load', parsePosts);
