@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-language" content="en-US"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta names="apple-mobile-web-app-status-bar-style" content="black"/>
+    <script src="build/tinydown.js"></script>
+    <style type="text/css">
+    html, body {
+      line-height: 0;
+      font-size: 0;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+    }
+    html, body, body > a, body > textarea, body > div {
+      padding: 0;
+      margin: 0;
+      font-family: sans-serif;
+    }
+    body > a, body > textarea, body > div {
+      line-height: 16px;
+      font-size: 13px;
+    }
+    body > textarea, body > div {
+      overflow: scroll;
+      position: fixed;
+      margin-top: 1px;
+      top: 3%;
+      height: 97%;
+    }
+    body > a {
+      display: block;
+      width: 100%;
+      height: 3%;
+      background: #EEE;
+      text-decoration: none;
+      padding-left: 560px;
+      color: #666;
+      border-bottom: 1px solid black;
+    }
+    body > textarea {
+      left: 0;
+      width: 560px;
+      height: 97%;
+      border: 0;
+    }
+    body > div {
+      left: 560px;
+      border-left: 1px solid black;
+      padding: 4px;
+    }
+
+    
+    img {
+      margin: 8px 0;
+    }
+    li {
+      padding: 2px;
+    }
+    h2 {
+      border-bottom: 1px solid #DDD;
+    }
+    hr {
+      border: 2px dashed #DDD;
+    }
+    p {
+      padding: 0;
+      margin: 0;
+    }
+    pre, code {
+      background-color: #EEE;
+      color: #333;
+    }
+    pre, blockquote {
+      padding: 8px;
+    }
+    blockquote {
+      border-left: 4px solid #DDD;
+      margin: auto 0;
+      background-color: rgba(234,234,234,.2);
+    }
+    blockquote p {
+      margin: 0;
+    }
+    div.gist {
+      font-size: .8em;
+    }
+    div.gist, div.gist * {
+      margin: 0;
+      padding: 0;
+    }
+    iframe {
+      border: 8px solid #DDD;
+      margin: 8px;
+    }
+    td.line-data {
+      text-align: left !important;
+    }
+    h1 {
+      font-size: 16px;
+    }
+    h2 {
+      font-size: 15px;
+    }
+    h3 {
+      font-size: 14px;
+    }
+    h4 {
+      font-size: 13px;
+    }
+
+    </style>
+  </head>
+  <body>
+    <a href="#">link to this text</a>
+    <textarea></textarea>
+    <div></div>
+    <script>
+    (function ($) {
+      var
+        timer = 0,
+        document = window.document,
+        textarea = $('textarea'),
+        div = $('div'),
+        a = $('a'),
+        trim = /^\s+|\s+$/g;
+      function replace() {
+        var value = textarea.value.replace(trim, ''),
+            result;
+        localStorage.setItem('chapter', value);
+        a.href = location.href.split(/[?#]/)[0] + "?" + encodeURIComponent(value);
+        div.innerHTML = result = tinydown(value);
+        div.scrollTop = Math.round(
+          (textarea.scrollTop * div.offsetHeight) / textarea.scrollHeight
+        );
+      }
+      function onkeyup() {
+        clearTimeout(timer);
+        timer = setTimeout(replace, 500);
+      }
+      textarea.onkeyup = onkeyup;
+      if (/[?#](.+)$/.test(location.href)) {
+        textarea.value = decodeURIComponent(RegExp.$1);
+      } else {
+        textarea.value = localStorage.getItem('chapter') || '';
+      }
+      replace();
+    }(function(what){
+      return document.getElementsByTagName(what)[0];
+    }));
+    </script>
+  </body>
+</html>

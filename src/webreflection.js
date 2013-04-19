@@ -6,7 +6,7 @@
         querySelectorAll = 'querySelectorAll',
         getElementsByClassName = 'getElementsByClassName',
         getElementsByTagName = 'getElementsByTagName',
-        div, list, i, length, tmp;
+        div, list, i, length, tmp, when;
     if (querySelectorAll in document) {
       list = document[querySelectorAll]([tagName, className].join('.'));
     } else if (getElementsByClassName in document) {
@@ -31,7 +31,8 @@
     ) {
       if (
         re.test((findHeader(list[i][parentNode][parentNode][parentNode]) || {}).innerHTML) &&
-        ignoreSince < new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)
+        ignoreSince < (when = new Date(+RegExp.$3, months[RegExp.$1], +RegExp.$2)) &&
+        when < ignoreAfter
       ) {
         timeout(function (node) {
           tmp = normalized(tinydown(trim.call(node.textContent || node.innerText)));
@@ -62,6 +63,7 @@
         return text.replace(pre, '<pre class="code">$1</pre>');
       } : String,
       ignoreSince = new Date(2013, 3, 11).getTime(),
+      ignoreAfter = new Date(2013, 3, 18).getTime(),
       trim = ''.trim || function () {
         return this.replace(trimRE);
       },
